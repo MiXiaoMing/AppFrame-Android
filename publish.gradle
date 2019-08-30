@@ -1,0 +1,42 @@
+import java.text.SimpleDateFormat
+
+apply plugin: 'maven-publish'
+
+SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+String dateString = formatter.format(System.currentTimeMillis());
+
+publishing {
+    publications {
+        aar(MavenPublication) {
+            groupId 'com.appframe'
+            artifactId project.archivesBaseName
+            version dateString
+            artifact("$buildDir/outputs/aar/" + project.archivesBaseName + "-release.aar")
+            pom.withXml {
+                def dependenciesNode = asNode().appendNode('dependencies')
+                def addDependency = {
+                    if(it.group != null && (it.name != null || "unspecified".equals(it.name)) && it.version != null)
+                    {
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', it.group)
+                        dependencyNode.appendNode('artifactId', it.name)
+                        dependencyNode.appendNode('version', it.version)
+                    }
+                }
+
+                // todo library模块中，api类型加载两遍
+                configurations.implementation.allDependencies.each addDependency
+                configurations.api.allDependencies.each addDependency
+            }
+        }
+    }
+    repositories {
+        maven {
+            url "http://192.168.1.33:8082/repository/android/"
+            credentials {
+                username 'admin'
+                password 'admin'
+            }
+        }
+    }
+}

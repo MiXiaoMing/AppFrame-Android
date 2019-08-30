@@ -1,0 +1,10 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.appframe.library">
+
+    <application android:name=".application.AFMultiDexApplication" />
+
+    <!--glide 配置编码-->
+    <meta-data
+        android:name="com.appframe.library.component.image.GlideModule"
+        android:value="GlideModule" />
+</manifest>
