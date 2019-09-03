@@ -15,7 +15,7 @@ publishing {
             pom.withXml {
                 def dependenciesNode = asNode().appendNode('dependencies')
                 def addDependency = {
-                    if(it.group != null && (it.name != null || "unspecified".equals(it.name)) && it.version != null)
+                    if(it.group != null && (it.name != null || "unspecified".equals(it.name)) && it.version != null && !"unspecified".equals(it.version))
                     {
                         def dependencyNode = dependenciesNode.appendNode('dependency')
                         dependencyNode.appendNode('groupId', it.group)
