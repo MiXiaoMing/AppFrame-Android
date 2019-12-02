@@ -7,9 +7,9 @@ import java.io.Serializable;
  * @param <T>
  */
 public class HttpResult<T> implements Serializable {
-    private String status;
-    private String message;
-    private String timestamp;
+    private String status = "";
+    private String message = "";
+    private String timestamp = "";
     private T data;
 
     public String getStatus() {
