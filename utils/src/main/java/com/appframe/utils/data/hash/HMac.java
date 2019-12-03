@@ -8,6 +8,9 @@ import javax.crypto.spec.SecretKeySpec;
 // HMAC (Hash-based Message Authentication Code) 常用于接口签名验证
 // 有 HmacMD5 HmacSHA1 HmacSHA224 HmacSHA256 HmacSHA384 HmacSHA512
 
+/**
+ * 散列消息鉴别码
+ */
 public class HMac {
 
     // 支持的算法

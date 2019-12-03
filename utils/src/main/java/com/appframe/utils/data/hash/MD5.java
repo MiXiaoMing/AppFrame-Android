@@ -6,6 +6,9 @@ import com.appframe.utils.logger.Logger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * 信息摘要算法
+ */
 public class MD5 {
 
     // 对字符串加密，转明文展示

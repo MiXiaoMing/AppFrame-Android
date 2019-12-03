@@ -15,8 +15,9 @@ public class CountryUtil {
         }
     }
 
-    private final static ArrayList<String> countryList;
-    private final static ArrayList<String> mobileAreaCode;
+    public final static ArrayList<String> countryList;
+    public final static ArrayList<String> countryEnglishList;
+    public final static ArrayList<String> mobileAreaCode;
 
     static {
         countryList = new ArrayList<>();
@@ -25,6 +26,15 @@ public class CountryUtil {
         countryList.add("中国澳门");
         countryList.add("中国台湾");
         countryList.add("新加坡");
+    }
+
+    static {
+        countryEnglishList = new ArrayList<>();
+        countryEnglishList.add("China");
+        countryEnglishList.add("Hong Kong, China");
+        countryEnglishList.add("Macao, China");
+        countryEnglishList.add("Taiwan, China");
+        countryEnglishList.add("Singapore");
     }
 
     static {
