@@ -82,4 +82,22 @@ public class ImageLoader {
             Logger.getLogger().e("参数错误，有空指针");
         }
     }
+
+    /**
+     * 圆形图片：网络资源，默认图像
+     * @param context
+     * @param filePath
+     * @param view
+     */
+    public static void circle(Context context, String filePath, int defaultImage, ImageView view) {
+        if (context != null && filePath != null && !filePath.isEmpty() && view != null) {
+            if (filePath.toLowerCase().endsWith("gif")) {
+                Glide.with(context).asGif().load(filePath).apply((new RequestOptions()).dontAnimate().placeholder(defaultImage).error(defaultImage).transform(new GlideCircleTransform())).into(view);
+            } else {
+                Glide.with(context).load(filePath).apply((new RequestOptions()).dontAnimate().placeholder(defaultImage).error(defaultImage).transform(new GlideCircleTransform())).into(view);
+            }
+        } else {
+            Logger.getLogger().e("参数错误，有空指针");
+        }
+    }
 }

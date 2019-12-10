@@ -39,10 +39,10 @@ public class CountryUtil {
 
     static {
         mobileAreaCode = new ArrayList<>();
-        mobileAreaCode.add("86");
-        mobileAreaCode.add("852");
-        mobileAreaCode.add("853");
-        mobileAreaCode.add("886");
-        mobileAreaCode.add("65");
+        mobileAreaCode.add("+86");
+        mobileAreaCode.add("+852");
+        mobileAreaCode.add("+853");
+        mobileAreaCode.add("+886");
+        mobileAreaCode.add("+65");
     }
 }

@@ -7,9 +7,9 @@ import java.util.regex.PatternSyntaxException;
 public class VerifyPhoneNumber {
 
     public static boolean isAvailable(String mobileAreaCode, String phoneNumber) {
-        if (mobileAreaCode.equals("86")) {
+        if (mobileAreaCode.equals("+86")) {
             return isChinaPhoneLegal(phoneNumber);
-        } else if (mobileAreaCode.equals("852")) {
+        } else if (mobileAreaCode.equals("+852")) {
             return isHKPhoneLegal(phoneNumber);
         } else {
             return true;
