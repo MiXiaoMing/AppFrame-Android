@@ -7,14 +7,30 @@ import android.os.Bundle;
 import com.appframe.utils.app.AppRuntimeUtil;
 import com.appframe.utils.logger.Logger;
 
+import java.util.ArrayList;
+
 /**
  * activity状态改变监听器
  */
 
-public class ActivityLifecycle extends Subject<ActivityLifecycleObserver>{
+public class ActivityLifecycle {
 
     public ActivityLifecycle() {
         Logger.getLogger().d("ActivityLifecycle init");
+    }
+
+    private static ArrayList<ActivityLifecycleObserver> observers = new ArrayList<>();
+
+    public static void attach(ActivityLifecycleObserver observer) {
+        observers.add(observer);
+        observer.attached();
+    }
+
+    public static void detach(ActivityLifecycleObserver observer) {
+        if (observers.contains(observer)) {
+            observers.remove(observer);
+            observer.detached();
+        }
     }
 
     private String previousActivityName;
@@ -31,7 +47,7 @@ public class ActivityLifecycle extends Subject<ActivityLifecycleObserver>{
         public void onActivityStarted(Activity activity) {
             if (activityCount == 0) {
                 for (ActivityLifecycleObserver observer : observers) {
-                    observer.changeToBackground();
+                    observer.changeToForeground();
                 }
                 AppRuntimeUtil.getInstance().setFrontOrBack(true);
                 previousActivityName = "Home";
