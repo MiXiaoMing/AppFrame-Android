@@ -19,7 +19,6 @@ public class ImageLoader {
                     imageView.getViewTreeObserver().removeOnPreDrawListener(this);
                     int height = imageView.getMeasuredHeight();
                     int width = imageView.getMeasuredWidth();
-                    Logger.getLogger().d("ImageUtil + 测量控件大小：" + width + "..." + height);
                     if (width != 0 && height != 0) {
                         String finalFilePath = filePath;
                         if (filePath.startsWith("http")) {
