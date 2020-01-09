@@ -21,18 +21,15 @@ import com.appframe.utils.logger.Logger;
  */
 
 public class AFMultiDexApplication extends AFApplication {
-    private static final String TAG = "AFMultiDexApplication ";
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Logger.getLogger().e(TAG + "onCreate.");
     }
 
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        Logger.getLogger().e(TAG + "attachBaseContext.");
         MultiDex.install(this);
     }
 }
