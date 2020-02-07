@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import com.appframe.api.interfaces.UserDataManager;
 import com.appframe.api.user.SendSmsEntity;
 import com.appframe.framework.config.MetaDataConfig;
+import com.appframe.framework.dialog.ProgressDialog;
 import com.appframe.framework.share.ShareMedia;
 import com.appframe.framework.share.ShareUtils;
 import com.appframe.library.component.image.ImageLoader;
@@ -36,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
         share();
 
         loginQq();
+
+        progressDialog();
     }
 
     private void initConfig() {
@@ -118,5 +121,19 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         // 分享回调需要。
         ShareUtils.onActivityResult(this, requestCode, resultCode, data);
+    }
+
+    private void progressDialog() {
+        findViewById(R.id.btn_progress_dialog).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
+                if (progressDialog.isShow()) {
+                    progressDialog.dismiss();
+                } else {
+                    progressDialog.show();
+                }
+            }
+        });
     }
 }
