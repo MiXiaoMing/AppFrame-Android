@@ -3,6 +3,8 @@ package com.appframe.utils.app;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -72,4 +74,14 @@ public class AppRuntimeUtil {
     public boolean isFrontOrBack() {
         return frontOrBack;
     }
+
+    /**
+     * 当前Activity是否可用
+     */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    public boolean isCurrentActivityAvailable() {
+        Activity activity = getCurrentActivity();
+        return activity != null && !activity.isDestroyed() && !activity.isFinishing();
+    }
+
 }
