@@ -14,6 +14,7 @@ import com.appframe.framework.share.ShareMedia;
 import com.appframe.framework.share.ShareUtils;
 import com.appframe.library.component.image.ImageLoader;
 import com.appframe.utils.logger.Logger;
+import com.appframe.webview.TestWebViewActivity;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
         loginQq();
 
         progressDialog();
+
+        webView();
     }
 
     private void initConfig() {
@@ -133,6 +136,16 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     progressDialog.show();
                 }
+            }
+        });
+    }
+
+    private void webView() {
+        findViewById(R.id.btn_web_view).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, TestWebViewActivity.class);
+                startActivity(intent);
             }
         });
     }
