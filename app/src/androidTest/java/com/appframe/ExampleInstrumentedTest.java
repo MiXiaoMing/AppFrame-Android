@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.appframe.utils.app.AppOperateUtil;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -22,5 +24,8 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getTargetContext();
 
         assertEquals("com.appframe.appframe", appContext.getPackageName());
+
+        // 手机是否安装支付宝
+        assertEquals(false, AppOperateUtil.isAliPayInstalled(appContext));
     }
 }

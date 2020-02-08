@@ -1,9 +1,11 @@
 package com.appframe.utils.app;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 
 import com.appframe.utils.logger.Logger;
 
@@ -37,4 +39,16 @@ public class AppOperateUtil {
         Intent intent = packageManager.getLaunchIntentForPackage(packageName);
         context.startActivity(intent);
     }
+
+
+    /**
+     * 是否安装支付宝。
+     */
+    public static boolean isAliPayInstalled(Context context) {
+        Uri uri = Uri.parse("alipays://platformapi/startApp");
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        ComponentName componentName = intent.resolveActivity(context.getPackageManager());
+        return componentName != null;
+    }
+
 }
