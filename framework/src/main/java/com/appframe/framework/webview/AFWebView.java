@@ -124,6 +124,17 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
         mContext = context;
         inflate(getContext(), R.layout.af_web_view, this);
         mRefreshLayout = findViewById(R.id.smart_refresh_layout);
+        initRefreshLayout(context);
+
+        mWebView = findViewById(R.id.prevent_crash_web_view);
+        mEmptyView = findViewById(R.id.tv_empty_view);
+        mLoadingView = findViewById(R.id.iv_loading);
+        Glide.with(mContext).load(R.drawable.gif_loading).into(mLoadingView);
+        initWebView();
+        ActivityLifecycle.attach(this);
+    }
+
+    private void initRefreshLayout(final Context context) {
         // 默认不可下拉刷新，如果出现错误了（小猫跳绳），激活下拉刷新。
         mRefreshLayout.setEnableRefresh(false);
         mRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
@@ -152,12 +163,6 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
                 }
             }
         });
-        mWebView = findViewById(R.id.prevent_crash_web_view);
-        mEmptyView = findViewById(R.id.tv_empty_view);
-        mLoadingView = findViewById(R.id.iv_loading);
-        Glide.with(mContext).load(R.drawable.gif_loading).into(mLoadingView);
-        initWebView();
-        ActivityLifecycle.attach(this);
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -183,84 +188,7 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
 
         setWebViewClient(new AFWebViewClient(mContext, this));
 
-        setWebChromeClient(new WebChromeClient() {
-            @Override
-            public void onReceivedTitle(WebView view, String title) {
-                super.onReceivedTitle(view, title);
-                // 防止显示无网络的title
-                if (!NetUtil.isConnect(getContext())) {
-                    return;
-                }
-                if (title == null) {
-                    return;
-                }
-            }
-
-            // 支持js弹框
-            @Override
-            public boolean onJsAlert(WebView view, String url, String message, final JsResult result) {
-                AlertDialog.Builder b = new AlertDialog.Builder(getContext());
-                b.setTitle("Alert");
-                b.setMessage(message);
-                b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        result.confirm();
-                    }
-                });
-                b.setCancelable(false);
-                b.create().show();
-                return true;
-            }
-
-            // 支持js弹框
-            @Override
-            public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
-                AlertDialog.Builder b = new AlertDialog.Builder(getContext());
-                b.setTitle("Confirm");
-                b.setMessage(message);
-                b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        result.confirm();
-                    }
-                });
-                b.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        result.cancel();
-                    }
-                });
-                b.create().show();
-                return true;
-            }
-
-            // 支持js弹框
-            @Override
-            public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, final JsPromptResult result) {
-                final View v = View.inflate(getContext(), R.layout.support_prompt_dialog, null);
-                ((TextView) v.findViewById(R.id.prompt_message_text)).setText(message);
-                ((EditText) v.findViewById(R.id.prompt_input_field)).setText(defaultValue);
-                AlertDialog.Builder b = new AlertDialog.Builder(getContext());
-                b.setTitle("Prompt");
-                b.setView(v);
-                b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String value = ((EditText) v.findViewById(R.id.prompt_input_field)).getText().toString();
-                        result.confirm(value);
-                    }
-                });
-                b.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        result.cancel();
-                    }
-                });
-                b.create().show();
-                return true;
-            }
-        });
+        setWebChromeClient(new AFWebChromeClient(mContext, this));
     }
 
     private void initData() {
@@ -278,10 +206,6 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
                 }
             }
         });
-    }
-
-    private void setDataToView() {
-
     }
 
     /**
@@ -304,6 +228,21 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
 
     public void destroy() {
         mWebView.destroy();
+    }
+
+    /**
+     * Activity等外部调用
+     */
+    public void goBack() {
+        if (mContext instanceof Activity) {
+            // 适配加载error.html后的返回
+            if (mBackPageNum > 0) {
+                mWebView.goBack();
+                mBackPageNum -= 1;
+            } else {
+                ((Activity) mContext).finish();
+            }
+        }
     }
 
     /**
@@ -383,7 +322,7 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
     }
 
     /**
-     * 移除监听。
+     * 从窗口移除。
      */
     @Override
     protected void onDetachedFromWindow() {
@@ -554,21 +493,6 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
     @Override
     public void detached() {
 
-    }
-
-    /**
-     * Activity等外部调用
-     */
-    public void goBack() {
-        if (mContext instanceof Activity) {
-            // 适配加载error.html后的返回
-            if (mBackPageNum > 0) {
-                mWebView.goBack();
-                mBackPageNum -= 1;
-            } else {
-                ((Activity) mContext).finish();
-            }
-        }
     }
 
     public void setBackPageNum(int backPageNum) {
