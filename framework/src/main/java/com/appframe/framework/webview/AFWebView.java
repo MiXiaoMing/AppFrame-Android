@@ -85,11 +85,11 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
     /**
      * WebView开始加载标识。
      */
-    private static final String WEB_VIEW_STATE_START = "start";
+    public static final String WEB_VIEW_STATE_START = "start";
     /**
      * WebView加载完成标识。
      */
-    private static final String WEB_VIEW_STATE_FINISH = "finished";
+    public static final String WEB_VIEW_STATE_FINISH = "finished";
     /**
      * WebView超时时间。（单位：毫秒。超过此时间后，认为网络不好，显示重新加载按钮，给用户重新加载的机会）
      */
@@ -181,83 +181,7 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
 
         mWebView.requestFocus();
 
-        setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                try {
-                    if (mContext == null) {
-                        return true;
-                    }
-                    if (mContext instanceof Activity && !AppRuntimeUtil.getInstance().isCurrentActivityAvailable()) {
-                        return true;
-                    }
-                    if (mUrl == null || url == null) {
-                        return true;
-                    }
-                    if (!mUrl.equals(url)) {
-                        mBackPageNum += 1;
-                        loadUrl(url);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return true;
-            }
-
-            @Override
-            public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-                // 开始加载url。
-                mWebViewState = WEB_VIEW_STATE_START;
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                if (!isAvailable()) {
-                    return;
-                }
-                if (url == null) {
-                    return;
-                }
-
-                // 防止出错后赋值
-                if (!url.contains("error.html")) {
-                    mUrl = url;
-                }
-
-                String state = WEB_VIEW_STATE_FINISH;
-                if (isCountDownTimerFinished) {
-                } else {
-                    mWebViewState = state;
-                    if (isWebViewFinished()) {
-                        webViewFinished();
-                    }
-                }
-            }
-
-            @Override
-            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                super.onReceivedError(view, errorCode, description, failingUrl);
-                if (!mIsError) {
-                    mIsError = true;
-                    // 防止用户看到我们的域名
-                    mWebView.loadUrl("file:///android_asset/error.html");
-                    // 出现错误后，激活下拉刷新。
-                    if (NetUtil.isConnect(getContext())) {
-                        mRefreshLayout.setEnableRefresh(true);
-                    } else {
-                        AFToast.showShort(getContext(), R.string.network_failed);
-                    }
-                }
-            }
-
-            @Override
-            public void onReceivedSslError(WebView view,
-                                           SslErrorHandler handler, SslError error) {
-                handler.proceed();
-            }
-        });
+        setWebViewClient(new AFWebViewClient(mContext, this));
 
         setWebChromeClient(new WebChromeClient() {
             @Override
@@ -544,7 +468,7 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
     /**
      * WebView加载完成
      */
-    private void webViewFinished() {
+    public void webViewFinished() {
         if (NetUtil.isConnect(mContext)) {
             mWebView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
@@ -645,5 +569,37 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
                 ((Activity) mContext).finish();
             }
         }
+    }
+
+    public void setBackPageNum(int backPageNum) {
+        this.mBackPageNum = backPageNum;
+    }
+
+    public int getBackPageNum() {
+        return mBackPageNum;
+    }
+
+    public void setWebViewState(String webViewState) {
+        this.mWebViewState = webViewState;
+    }
+
+    public void setUrl(String url) {
+        this.mUrl = url;
+    }
+
+    public boolean isCountDownTimerFinished() {
+        return isCountDownTimerFinished;
+    }
+
+    public boolean isIsError() {
+        return mIsError;
+    }
+
+    public void setIsError(boolean isError) {
+        this.mIsError = isError;
+    }
+
+    public void setEnableRefresh(boolean enableRefresh) {
+        mRefreshLayout.setEnableRefresh(enableRefresh);
     }
 }
