@@ -20,7 +20,9 @@ import android.webkit.DownloadListener;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
 import android.webkit.SslErrorHandler;
+import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
+import android.webkit.WebHistoryItem;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -96,6 +98,10 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
      * 倒计时间隔时间。（单位：毫秒）
      */
     private static final long COUNT_DOWN_INTERNAL = 1000;
+    /**
+     * goBack
+     */
+    private int mBackPageNum;
 
     public AFWebView(Context context) {
         this(context, null);
@@ -179,7 +185,6 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 try {
-                    // 反射异常捕获
                     if (mContext == null) {
                         return true;
                     }
@@ -189,9 +194,8 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
                     if (mUrl == null || url == null) {
                         return true;
                     }
-                    if (mUrl.equals(url)) {
-                        mWebView.loadUrl(url);
-                    } else {
+                    if (!mUrl.equals(url)) {
+                        mBackPageNum += 1;
                         loadUrl(url);
                     }
                 } catch (Exception e) {
@@ -237,8 +241,8 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
                 super.onReceivedError(view, errorCode, description, failingUrl);
                 if (!mIsError) {
                     mIsError = true;
+                    // 防止用户看到我们的域名
                     mWebView.loadUrl("file:///android_asset/error.html");
-                    Logger.getLogger().e("url：" + mWebView.getUrl());
                     // 出现错误后，激活下拉刷新。
                     if (NetUtil.isConnect(getContext())) {
                         mRefreshLayout.setEnableRefresh(true);
@@ -403,19 +407,6 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
                 }
             }
         };
-    }
-
-    /**
-     * 是否安装支付宝。
-     *
-     * @param context context
-     * @return 安装：true，未安装：false
-     */
-    private boolean isAliPayInstalled(Context context) {
-        Uri uri = Uri.parse("alipays://platformapi/startApp");
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        ComponentName componentName = intent.resolveActivity(context.getPackageManager());
-        return componentName != null;
     }
 
     /**
@@ -645,10 +636,12 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
      * Activity等外部调用
      */
     public void goBack() {
-        if (mWebView.canGoBack()) {
-            mWebView.goBack();
-        } else {
-            if (mContext instanceof Activity) {
+        if (mContext instanceof Activity) {
+            // 适配加载error.html后的返回
+            if (mBackPageNum > 0) {
+                mWebView.goBack();
+                mBackPageNum -= 1;
+            } else {
                 ((Activity) mContext).finish();
             }
         }

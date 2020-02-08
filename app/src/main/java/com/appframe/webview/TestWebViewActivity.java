@@ -21,7 +21,8 @@ public class TestWebViewActivity extends AFBaseActivity {
         setContentView(R.layout.activity_test_web_view);
 
         webView = findViewById(R.id.web_view);
-        webView.loadUrl("http://www.baidu.com");
+        webView.loadUrl("https://yuncaiweb.ycaibaba.com/home?token=F8A0B1921ED95543791B22DED0203CFC&version=2.6.2");
+//        webView.loadUrl("http://www.baidu.com");
     }
 
     @Override
