@@ -34,8 +34,10 @@ public class AFWebViewClient extends WebViewClient {
             return true;
         }
         if (!mWebView.getUrl().equals(url)) {
-            mWebView.setBackPageNum(mWebView.getBackPageNum() + 1);
-            mWebView.loadUrl(url);
+            // 子类可以重写
+            mWebView.shouldOverrideUrlLoading(view, url);
+        } else {
+            mWebView.reload();
         }
         return true;
     }
@@ -69,6 +71,9 @@ public class AFWebViewClient extends WebViewClient {
                 mWebView.webViewFinished();
             }
         }
+
+        // 子类可以重写
+        mWebView.onPageFinished(view, url);
     }
 
     @Override

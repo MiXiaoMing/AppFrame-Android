@@ -42,6 +42,9 @@ public class AFWebChromeClient extends WebChromeClient {
         if (title == null) {
             return;
         }
+
+        // 子类可以重写
+        mWebView.onReceivedTitle(view, title);
     }
 
     // 支持js弹框

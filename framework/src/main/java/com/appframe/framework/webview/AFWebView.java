@@ -443,6 +443,19 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
         loadJavaScriptFunction("enterForeground", "");
     }
 
+    /************* 子类可以重写 *************/
+    public void shouldOverrideUrlLoading(WebView view, String url) {
+        Logger.getLogger().e("父类");
+        setBackPageNum(mBackPageNum + 1);
+        loadUrl(url);
+    }
+
+    public void onPageFinished(WebView view, String url) {
+    }
+
+    public void onReceivedTitle(WebView view, String title) {
+    }
+
     /************* get set *************/
     public void setDownloadListener(DownloadListener downloadListener) {
         this.mWebView.setDownloadListener(downloadListener);
