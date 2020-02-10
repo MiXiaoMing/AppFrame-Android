@@ -28,6 +28,5 @@ public class ChildAFWebView extends AFWebView {
     @Override
     public void shouldOverrideUrlLoading(WebView view, String url) {
         super.shouldOverrideUrlLoading(view, url);
-        Logger.getLogger().e("子类");
     }
 }

@@ -445,7 +445,6 @@ public class AFWebView extends RelativeLayout implements ActivityLifecycleObserv
 
     /************* 子类可以重写 *************/
     public void shouldOverrideUrlLoading(WebView view, String url) {
-        Logger.getLogger().e("父类");
         setBackPageNum(mBackPageNum + 1);
         loadUrl(url);
     }
