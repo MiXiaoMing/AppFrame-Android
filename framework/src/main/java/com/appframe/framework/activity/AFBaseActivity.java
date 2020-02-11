@@ -17,53 +17,16 @@ import com.appframe.utils.logger.Logger;
  */
 
 public class AFBaseActivity extends AppCompatActivity {
-    /**
-     * 进度条
-     */
-    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Logger.getLogger().d(getClass().getSimpleName() + " onCreate.");
-
         this.getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
             @Override
             public void onSystemUiVisibilityChange(int visibility) {
 
             }
         });
-        mProgressDialog = new ProgressDialog(this);
-    }
-
-    public ProgressDialog getDialog() {
-        return mProgressDialog;
-    }
-
-    public void showProgressDialog() {
-        if (mProgressDialog != null && !mProgressDialog.isShow()) {
-            mProgressDialog.show();
-        }
-    }
-
-    public void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShow()) {
-            mProgressDialog.dismiss();
-        }
-    }
-
-    public void myToast(String message) {
-        AFToast.showShort(AppRuntimeUtil.getInstance().getCurrentActivity(), message);
-    }
-
-    public void myToast(int id) {
-        AFToast.showShort(AppRuntimeUtil.getInstance().getCurrentActivity(), id);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Logger.getLogger().d(getClass().getSimpleName() + " onDestroy.");
     }
 
     /**
