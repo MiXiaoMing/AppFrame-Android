@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import com.appframe.api.interfaces.UserDataManager;
 import com.appframe.api.user.SendSmsEntity;
 import com.appframe.framework.config.MetaDataConfig;
-import com.appframe.framework.dialog.ProgressDialog;
 import com.appframe.framework.share.ShareMedia;
 import com.appframe.framework.share.ShareUtils;
 import com.appframe.library.component.image.ImageLoader;
