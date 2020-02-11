@@ -127,17 +127,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void progressDialog() {
-        findViewById(R.id.btn_progress_dialog).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
-                if (progressDialog.isShow()) {
-                    progressDialog.dismiss();
-                } else {
-                    progressDialog.show();
-                }
-            }
-        });
     }
 
     private void webView() {
