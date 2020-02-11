@@ -11,6 +11,20 @@ import com.bumptech.glide.request.RequestOptions;
 
 public class ImageLoader {
 
+    /**
+     * 圆形图片：本地资源
+     * @param context
+     * @param resID
+     * @param view
+     */
+    public static void normal(Context context, int resID, ImageView view) {
+        if (context != null && view != null) {
+            Glide.with(context).load(resID).apply((new RequestOptions()).dontAnimate().placeholder(Constants.default_image).error(Constants.default_image)).into(view);
+        } else {
+            Logger.getLogger().e("参数错误，有空指针");
+        }
+    }
+
     public static void normal(final Context context, final String filePath, final int defaultRes, final ImageView imageView) {
         if (context != null && filePath != null && !filePath.isEmpty() && imageView != null) {
             ViewTreeObserver vto = imageView.getViewTreeObserver();
