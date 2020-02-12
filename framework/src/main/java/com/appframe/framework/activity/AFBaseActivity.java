@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.appframe.framework.dialog.ProgressDialog;
 import com.appframe.library.component.notify.AFToast;
 import com.appframe.utils.app.AppRuntimeUtil;
 import com.appframe.utils.logger.Logger;
