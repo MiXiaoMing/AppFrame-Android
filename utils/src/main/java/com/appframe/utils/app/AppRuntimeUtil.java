@@ -4,9 +4,15 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Build;
+import android.os.Debug;
 import android.support.annotation.RequiresApi;
+import android.text.TextUtils;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.lang.ref.WeakReference;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -47,11 +53,25 @@ public class AppRuntimeUtil {
         return currentActivityRef.get();
     }
 
+    public int getPidByProcessName(Context context, String packageName) {
+        if (TextUtils.isEmpty(packageName)) {
+            return -1;
+        }
+        ActivityManager mActivityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        // 通过调用ActivityManager的getRunningAppProcesses()方法获得系统里所有正在运行的进程
+        List<ActivityManager.RunningAppProcessInfo> appProcessList = mActivityManager.getRunningAppProcesses();
+        if (appProcessList != null) {
+            for (ActivityManager.RunningAppProcessInfo appProcess : appProcessList) {
+                if (packageName.equals(appProcess.processName)) {
+                    return appProcess.pid;
+                }
+            }
+        }
+        return -1;
+    }
+
     /**
      * 获取进程名称
-     * @param cxt
-     * @param pid
-     * @return
      */
     public String getProcessName(Context cxt, int pid) {
         ActivityManager am = (ActivityManager) cxt.getSystemService(Context.ACTIVITY_SERVICE);
@@ -84,4 +104,79 @@ public class AppRuntimeUtil {
         return activity != null && !activity.isDestroyed() && !activity.isFinishing();
     }
 
+    /**
+     * 进程总内存
+     */
+    public int getPidMemorySize(Context context, int pid) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        int[] myMempid = new int[] { pid };
+        Debug.MemoryInfo[] memoryInfo = am.getProcessMemoryInfo(myMempid);
+        int memSize = memoryInfo[0].getTotalPss();
+        return memSize;
+    }
+
+    /**
+     * cpu 比例
+     */
+    public double getProcessCpuUsage(int pid) {
+        try {
+            RandomAccessFile reader = new RandomAccessFile("/proc/stat", "r");
+            String load = reader.readLine();
+            String[] toks = load.split(" ");
+
+            double totalCpuTime1 = 0.0;
+            int len = toks.length;
+            for (int i = 2; i < len; i ++) {
+                totalCpuTime1 += Double.parseDouble(toks[i]);
+            }
+
+            RandomAccessFile reader2 = new RandomAccessFile("/proc/"+ pid +"/stat", "r");
+            String load2 = reader2.readLine();
+            String[] toks2 = load2.split(" ");
+
+            double processCpuTime1 = 0.0;
+            double utime = Double.parseDouble(toks2[13]);
+            double stime = Double.parseDouble(toks2[14]);
+            double cutime = Double.parseDouble(toks2[15]);
+            double cstime = Double.parseDouble(toks2[16]);
+
+            processCpuTime1 = utime + stime + cutime + cstime;
+
+            try {
+                Thread.sleep(360);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            reader.seek(0);
+            load = reader.readLine();
+            reader.close();
+            toks = load.split(" ");
+            double totalCpuTime2 = 0.0;
+            len = toks.length;
+            for (int i = 2; i < len; i ++) {
+                totalCpuTime2 += Double.parseDouble(toks[i]);
+            }
+            reader2.seek(0);
+            load2 = reader2.readLine();
+            String []toks3 = load2.split(" ");
+
+            double processCpuTime2 = 0.0;
+            utime = Double.parseDouble(toks3[13]);
+            stime = Double.parseDouble(toks3[14]);
+            cutime = Double.parseDouble(toks3[15]);
+            cstime = Double.parseDouble(toks3[16]);
+
+            processCpuTime2 = utime + stime + cutime + cstime;
+            double usage = (processCpuTime2 - processCpuTime1) * 100.00
+                    / ( totalCpuTime2 - totalCpuTime1);
+            BigDecimal b = new BigDecimal(usage);
+            double res = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            return res;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        return 0.0;
+    }
 }

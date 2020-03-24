@@ -1,6 +1,7 @@
 package com.appframe.testdata.api;
 
 import com.appframe.framework.http.EmptyHttpResult;
+import com.appframe.testdata.api.input.PerformancesBody;
 import com.appframe.testdata.api.input.PointsBody;
 import com.appframe.testdata.api.input.StartRecordBody;
 import com.appframe.testdata.api.input.StopRecordBody;
@@ -38,5 +39,9 @@ public class TestDataServerManager {
 
     public Observable<EmptyHttpResult> uploadInterfaces(PointsBody body) {
         return service.uploadInterfaces(body);
+    }
+
+    public Observable<EmptyHttpResult> uploadPerformances(PerformancesBody body) {
+        return service.uploadPerformances(body);
     }
 }

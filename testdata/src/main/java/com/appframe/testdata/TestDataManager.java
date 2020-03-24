@@ -8,10 +8,12 @@ import com.appframe.library.application.AFApplication;
 import com.appframe.library.component.notify.AFToast;
 import com.appframe.testdata.api.MobileServerRetrofit;
 import com.appframe.testdata.api.TestDataServerManager;
+import com.appframe.testdata.api.input.PerformancesBody;
 import com.appframe.testdata.api.input.PointsBody;
 import com.appframe.testdata.api.input.StartRecordBody;
 import com.appframe.testdata.api.input.StopRecordBody;
 import com.appframe.testdata.api.output.StartRecordResult;
+import com.appframe.testdata.entity.Performance;
 import com.appframe.testdata.entity.PointData;
 import com.appframe.utils.app.AppUtil;
 import com.appframe.utils.device.DeviceUtil;
@@ -28,6 +30,7 @@ import io.reactivex.schedulers.Schedulers;
 public class TestDataManager {
     private PagePlugin pagePlugin;
     private InterfacePlugin interfacePlugin;
+    private PerformancePlugin performancePlugin;
     private String recordID;
 
     private static TestDataManager instance = new TestDataManager();
@@ -40,13 +43,14 @@ public class TestDataManager {
 
     }
 
-    public void start(String host) {
+    public void start(final String host) {
         recordID = "";
 
         timer.start();
 
         pagePlugin = new PagePlugin();
         interfacePlugin = new InterfacePlugin();
+        performancePlugin = new PerformancePlugin();
 
         MobileServerRetrofit.getInstance().resetApp(host);
         startRecord();
@@ -56,9 +60,11 @@ public class TestDataManager {
         if (!TextUtils.isEmpty(recordID)) {
             pagePlugin.stop();
             interfacePlugin.stop();
+            performancePlugin.stop();
 
             uploadPages();
             uploadInterfaces();
+            uploadPerformance();
 
             stopRecord();
         }
@@ -79,11 +85,14 @@ public class TestDataManager {
             } else {
                 uploadPages();
                 uploadInterfaces();
+                uploadPerformance();
             }
 
             timer.start();
         }
     };
+
+    /*******  网络请求  *******/
 
     private void startRecord() {
         StartRecordBody body = new StartRecordBody();
@@ -250,6 +259,55 @@ public class TestDataManager {
                     @Override
                     public void onError(Throwable e) {
                         interfacePlugin.interfaces.addAll(interfaces);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void uploadPerformance() {
+        if (TextUtils.isEmpty(recordID)) {
+            startRecord();
+            return;
+        }
+
+        final ArrayList<Performance> performances = new ArrayList<>(performancePlugin.performances);
+        if (performances.size() <= 0) {
+            return;
+        }
+
+        performancePlugin.performances.clear();
+
+        PerformancesBody body = new PerformancesBody();
+        body.recordId = recordID;
+        body.context = performances;
+
+        new TestDataServerManager()
+                .uploadPerformances(body)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<EmptyHttpResult>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(EmptyHttpResult result) {
+                        if (result.isSuccess()) {
+                            AFToast.showShort(AFApplication.applicationContext, "评测数据，性能数据");
+                        } else {
+                            AFToast.showShort(AFApplication.applicationContext, "评测数据，性能数据 -- 失败");
+                            performancePlugin.performances.addAll(performances);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        performancePlugin.performances.addAll(performances);
                     }
 
                     @Override

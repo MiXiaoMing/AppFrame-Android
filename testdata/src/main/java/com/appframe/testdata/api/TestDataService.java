@@ -1,6 +1,7 @@
 package com.appframe.testdata.api;
 
 import com.appframe.framework.http.EmptyHttpResult;
+import com.appframe.testdata.api.input.PerformancesBody;
 import com.appframe.testdata.api.input.PointsBody;
 import com.appframe.testdata.api.input.StartRecordBody;
 import com.appframe.testdata.api.input.StopRecordBody;
@@ -49,4 +50,11 @@ public interface TestDataService {
     @Headers({"Content-Type: application/json", "Accept: application/json"})
     @POST("client/monitor/urlResponse")
     Observable<EmptyHttpResult> uploadInterfaces(@Body PointsBody body);
+
+    /**
+     * 性能数据
+     */
+    @Headers({"Content-Type: application/json", "Accept: application/json"})
+    @POST("client/monitor/cpuAndMemory")
+    Observable<EmptyHttpResult> uploadPerformances(@Body PerformancesBody body);
 }

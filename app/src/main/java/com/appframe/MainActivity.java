@@ -1,10 +1,12 @@
 package com.appframe;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.appframe.api.interfaces.UserDataManager;
 import com.appframe.api.user.SendSmsEntity;
@@ -12,6 +14,9 @@ import com.appframe.framework.config.MetaDataConfig;
 import com.appframe.framework.share.ShareMedia;
 import com.appframe.framework.share.ShareUtils;
 import com.appframe.library.component.image.ImageLoader;
+import com.appframe.library.permission.PermissionsManager;
+import com.appframe.library.permission.PermissionsResultAction;
+import com.appframe.testdata.TestDataManager;
 import com.appframe.utils.logger.Logger;
 import com.appframe.webview.TestWebViewActivity;
 
@@ -27,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        requestPermissions();
+
 
         initConfig();
 
@@ -103,7 +111,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_share_platform).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShareUtils.sharePlatform(MainActivity.this, ShareMedia.QZONE);
+//                ShareUtils.sharePlatform(MainActivity.this, ShareMedia.QZONE);
+                TestDataManager.getInstance().stop();
             }
         });
     }
@@ -134,6 +143,21 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, TestWebViewActivity.class);
                 startActivity(intent);
+            }
+        });
+    }
+
+    @TargetApi(23)
+    private void requestPermissions() {
+        PermissionsManager.getInstance().requestAllManifestPermissionsIfNecessary(this, new PermissionsResultAction() {
+            @Override
+            public void onGranted() {
+                Toast.makeText(MainActivity.this, "All permissions have been granted", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onDenied(String permission) {
+                Toast.makeText(MainActivity.this, "Permission " + permission + " has been denied", Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -59,8 +59,6 @@ public class InterfacePlugin {
             data.recordTime = System.currentTimeMillis();
             interfaces.add(data);
 
-            Logger.getLogger().e("接口响应：" + request.url().toString() + "\n" + tookMs);
-
             return response;
         }
     }
