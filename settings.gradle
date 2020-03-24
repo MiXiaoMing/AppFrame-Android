@@ -1,1 +1,2 @@
 include ':app', ':framework', ':library', ':utils'
+include ':testdata'

@@ -8,6 +8,7 @@ import java.io.Serializable;
  */
 public class HttpResult<T> implements Serializable {
     private String status = "";
+    private Boolean success = false;
     private String message = "";
     private String timestamp = "";
     private T data;
@@ -18,6 +19,14 @@ public class HttpResult<T> implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean isSuccess) {
+        this.success = isSuccess;
     }
 
     public String getMessage() {

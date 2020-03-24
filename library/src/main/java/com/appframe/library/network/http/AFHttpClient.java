@@ -83,4 +83,8 @@ public class AFHttpClient {
         }
         return httpClient;
     }
+
+    public static void setHttpClient(OkHttpClient okHttpClient) {
+        httpClient = okHttpClient;
+    }
 }

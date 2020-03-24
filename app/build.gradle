@@ -17,6 +17,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "Boolean", "testDataPlatform", TEST_DATA_PLATFORM
+        }
+        debug {
+            buildConfigField "Boolean", "testDataPlatform", TEST_DATA_PLATFORM
         }
     }
 
@@ -35,4 +39,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     api project(":framework")
+    api project(":testdata")
 }
