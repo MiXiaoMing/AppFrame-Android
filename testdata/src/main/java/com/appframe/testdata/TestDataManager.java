@@ -58,6 +58,8 @@ public class TestDataManager {
 
     public void stop() {
         if (!TextUtils.isEmpty(recordID)) {
+            timer.cancel();
+
             pagePlugin.stop();
             interfacePlugin.stop();
             performancePlugin.stop();
