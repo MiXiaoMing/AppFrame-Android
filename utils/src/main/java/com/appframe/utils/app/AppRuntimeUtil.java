@@ -7,9 +7,12 @@ import android.os.Build;
 import android.os.Debug;
 import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
+import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
@@ -20,6 +23,40 @@ import java.util.List;
  */
 
 public class AppRuntimeUtil {
+    public double[] getCpuAndMemoryUsageTop(String name) {
+        Process process;
+        String line = "";
+        double[] result = new double[]{0, 0};
+        String partPackageName = name;
+        if (name.lastIndexOf(".") != -1) {
+            partPackageName = name.substring(0, name.lastIndexOf("."));
+        }
+        String cmd = "top -n 1 | grep "+partPackageName;
+        try {
+            process = Runtime.getRuntime().exec(new String[]{"sh", "-c", cmd});
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            while ((line = br.readLine()) != null) {
+                Log.e("11111111", "getProcessCpuUsageTop: partPackageName "+ line);
+                String[] resp = line.trim().split("\\s+");
+                if (line.contains(partPackageName) && !line.contains("grep") && resp.length>10) {
+
+                    // cpu 占用百分比
+                    result[0] = Double.parseDouble(resp[8]);
+                    // 内存 占用百分比
+//                    result[1] = Double.parseDouble(resp[9]);
+                    // 物理内存大小
+                    result[1] = Double.parseDouble(resp[5].substring(0, resp[5].length() - 1)) - Double.parseDouble(resp[6].substring(0, resp[6].length() - 1));
+                    break;
+                }
+            }
+            br.close();
+//            process.waitFor();
+        } catch (Exception ex) {
+           ex.printStackTrace();
+        }
+        return result;
+    }
+
     /**
      * 饿汉模式
      */
