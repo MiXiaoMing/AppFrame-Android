@@ -45,7 +45,8 @@ public class AppRuntimeUtil {
                     // 内存 占用百分比
 //                    result[1] = Double.parseDouble(resp[9]);
                     // 物理内存大小
-                    result[1] = Double.parseDouble(resp[5].substring(0, resp[5].length() - 1)) - Double.parseDouble(resp[6].substring(0, resp[6].length() - 1));
+//                    result[1] = Double.parseDouble(resp[5].substring(0, resp[5].length() - 1)) - Double.parseDouble(resp[6].substring(0, resp[6].length() - 1));
+                    result[1] = Double.parseDouble(resp[5].substring(0, resp[5].length() - 1));
                     break;
                 }
             }
