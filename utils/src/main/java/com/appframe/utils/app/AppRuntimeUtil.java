@@ -9,6 +9,8 @@ import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.appframe.utils.logger.Logger;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -57,6 +59,53 @@ public class AppRuntimeUtil {
         }
         return result;
     }
+    public double getMemoryUsage (int processId) {
+        Process process;
+        String line = "";
+        double result = 0;
+        String cmdMem = "dumpsys meminfo " + processId;
+        try {
+            process = Runtime.getRuntime().exec(cmdMem);
+            Logger.getLogger().e("========="+process.getInputStream());
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            while ((line = br.readLine()) != null) {
+                String[] resp = line.trim().split("\\s+");
+                if (line.contains("TOTAL:")) {
+                    // cpu 占用百分比
+                    result = Double.parseDouble(resp[1])/1024;
+                    break;
+                }
+            }
+            br.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return result;
+    }
+    public double getCpuUsage (String partPackageName) {
+        Process process;
+        String line = "";
+        double result  = 0;
+        String cmdCpu = "dumpsys cpuinfo";
+        try {
+            process = Runtime.getRuntime().exec(cmdCpu);
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            Logger.getLogger().e("========="+process.getInputStream());
+            while ((line = br.readLine()) != null) {
+                String[] resp = line.trim().split("\\s+");
+                if (line.contains(partPackageName)) {
+                    // cpu 占用百分比
+                    result = Double.parseDouble(resp[0]);
+                    break;
+                }
+            }
+            br.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return result;
+    }
+
 
     /**
      * 饿汉模式

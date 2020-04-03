@@ -36,9 +36,13 @@ public class PerformancePlugin {
 //                performance.memoryUse = AppRuntimeUtil.getInstance().getPidMemorySize(AFApplication.applicationContext, processID);
                 performance.recordTime = System.currentTimeMillis();
 
-                double[] userCpuAndMemory = AppRuntimeUtil.getInstance().getCpuAndMemoryUsageTop(AppUtil.getPackageName(AFApplication.applicationContext));
-                performance.cpuUse = userCpuAndMemory[0];
-                performance.memoryUse = userCpuAndMemory[1];
+            //    double[] userCpuAndMemory = AppRuntimeUtil.getInstance().getCpuAndMemoryUsageTop(AppUtil.getPackageName(AFApplication.applicationContext));
+                double cpu = AppRuntimeUtil.getInstance().getCpuUsage(AppUtil.getPackageName(AFApplication.applicationContext));
+                double mem = AppRuntimeUtil.getInstance().getMemoryUsage(processID);
+                performance.cpuUse = cpu;
+                performance.memoryUse = mem;
+
+                Logger.getLogger().e("=========cpu" + cpu + "mem" + mem);
 
 
                 performances.add(performance);
