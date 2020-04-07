@@ -12,6 +12,7 @@ import android.util.Log;
 import com.appframe.utils.logger.Logger;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -64,21 +65,43 @@ public class AppRuntimeUtil {
         String line = "";
         double result = 0;
         String cmdMem = "dumpsys meminfo " + processId;
+        DataOutputStream dos = null;
+        BufferedReader br = null;
         try {
-            process = Runtime.getRuntime().exec(cmdMem);
-            Logger.getLogger().e("========="+process.getInputStream());
-            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            process = Runtime.getRuntime().exec("su");
+            dos = new DataOutputStream(process.getOutputStream());
+            dos.writeBytes(cmdMem+"\n");
+            dos.writeBytes("exit\n");
+            dos.flush();
+            br = new BufferedReader(new InputStreamReader(process.getInputStream()));
             while ((line = br.readLine()) != null) {
                 String[] resp = line.trim().split("\\s+");
-                if (line.contains("TOTAL:")) {
+                if (line.contains("TOTAL")) {
                     // cpu 占用百分比
                     result = Double.parseDouble(resp[1])/1024;
                     break;
                 }
             }
             br.close();
+            dos.close();
         } catch (Exception ex) {
             ex.printStackTrace();
+        }finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (dos != null) {
+                try {
+                    dos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return result;
     }
@@ -87,21 +110,42 @@ public class AppRuntimeUtil {
         String line = "";
         double result  = 0;
         String cmdCpu = "dumpsys cpuinfo";
+        DataOutputStream dos = null;
+        BufferedReader br = null;
         try {
-            process = Runtime.getRuntime().exec(cmdCpu);
-            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            Logger.getLogger().e("========="+process.getInputStream());
+            process = Runtime.getRuntime().exec("su");
+            dos = new DataOutputStream(process.getOutputStream());
+            dos.writeBytes(cmdCpu+"\n");
+            dos.writeBytes("exit\n");
+            dos.flush();
+            br = new BufferedReader(new InputStreamReader(process.getInputStream()));
             while ((line = br.readLine()) != null) {
                 String[] resp = line.trim().split("\\s+");
                 if (line.contains(partPackageName)) {
                     // cpu 占用百分比
-                    result = Double.parseDouble(resp[0]);
+                    result = Double.parseDouble(resp[0].substring(0, resp[0].length()-1));
                     break;
                 }
             }
             br.close();
         } catch (Exception ex) {
             ex.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (dos != null) {
+                try {
+                    dos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return result;
     }
