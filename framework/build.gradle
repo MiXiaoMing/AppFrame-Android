@@ -26,11 +26,13 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     api project(':library')
+
+    // 友盟
+    api 'com.umeng.umsdk:common:2.2.2'
     implementation files('libs/umeng-share-core-6.9.6.jar')
     implementation files('libs/umeng-share-QQ-simplify-6.9.6.jar')
     implementation files('libs/umeng-share-wechat-simplify-6.9.6.jar')
     implementation files('libs/umeng-sharetool-6.9.6.jar')
-    implementation files('libs/umeng-common-2.1.0.jar')
     //1.1.0 （1.0.5及以前版本的老用户升级需谨慎，API改动过大）
     api 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-30'
 }
