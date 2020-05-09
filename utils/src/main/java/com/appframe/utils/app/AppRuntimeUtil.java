@@ -126,7 +126,7 @@ public class AppRuntimeUtil {
     }
 
     /**
-     * 进程总内存
+     * 进程总内存， 需要root权限
      */
     public double getMemoryUsage (int processId) {
         Process process;
@@ -175,7 +175,7 @@ public class AppRuntimeUtil {
     }
 
     /**
-     * cpu 比例
+     * cpu 比例，需要root权限
      */
     public double getCpuUsage (String partPackageName) {
         Process process;
@@ -221,4 +221,38 @@ public class AppRuntimeUtil {
         }
         return result;
     }
+
+    public double[] getCpuAndMemoryByTop(String name) {
+        Process process;
+        String line = "";
+        double[] result = new double[]{0, 0};
+        String partPackageName = name;
+        if (name.lastIndexOf(".") != -1) {
+            partPackageName = name.substring(0, name.lastIndexOf("."));
+        }
+        String cmd = "top -n 1 | grep "+partPackageName;
+        try {
+            process = Runtime.getRuntime().exec(new String[]{"sh", "-c", cmd});
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            while ((line = br.readLine()) != null) {
+                String[] resp = line.trim().split("\\s+");
+                if (line.contains(partPackageName) && !line.contains("grep") && resp.length>10) {
+                    // cpu 占用百分比
+                    result[0] = Double.parseDouble(resp[8]);
+                    // 内存 占用百分比
+//                    result[1] = Double.parseDouble(resp[9]);
+                    // 物理内存大小
+                    result[1] = Double.parseDouble(resp[5].substring(0, resp[5].length() - 1));
+                    break;
+                }
+            }
+            br.close();
+//            process.waitFor();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return result;
+    }
+
+
 }

@@ -31,19 +31,11 @@ public class PerformancePlugin {
         public void onTick(long millisUntilFinished) {
             if (processID > 0) {
                 Performance performance = new Performance();
-                // TODO: 2020/3/24 这里不对，内存应为实时的
-//                performance.cpuUse = AppRuntimeUtil.getInstance().getProcessCpuUsageTop(processID);
-//                performance.memoryUse = AppRuntimeUtil.getInstance().getPidMemorySize(AFApplication.applicationContext, processID);
                 performance.recordTime = System.currentTimeMillis();
 
-            //    double[] userCpuAndMemory = AppRuntimeUtil.getInstance().getCpuAndMemoryUsageTop(AppUtil.getPackageName(AFApplication.applicationContext));
-                double cpu = AppRuntimeUtil.getInstance().getCpuUsage(AppUtil.getPackageName(AFApplication.applicationContext));
-                double mem = AppRuntimeUtil.getInstance().getMemoryUsage(processID);
-                performance.cpuUse = cpu;
-                performance.memoryUse = mem;
-
-                Logger.getLogger().e("=========cpu" + cpu + "mem" + mem);
-
+                double[] userCpuAndMemory = AppRuntimeUtil.getInstance().getCpuAndMemoryByTop(AppUtil.getPackageName(AFApplication.applicationContext));
+                performance.cpuUse = userCpuAndMemory[0];
+                performance.memoryUse = userCpuAndMemory[1];
 
                 performances.add(performance);
             }
