@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="statusbar_fake_status_bar_view" type="id" />
+    <item name="statusbar_translucent_view" type="id" />
+    <!-- 标题栏 -->
+    <item name="title_bar_view" type="id" />
+</resources>

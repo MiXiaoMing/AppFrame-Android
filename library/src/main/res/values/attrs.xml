@@ -4,4 +4,8 @@
     <declare-styleable name="AFButton">
         <attr name="clickPeriod" format="integer" />
     </declare-styleable>
+
+    <declare-styleable name="AFTextView">
+        <attr name="fontStype" format="string"/>
+    </declare-styleable>
 </resources>
