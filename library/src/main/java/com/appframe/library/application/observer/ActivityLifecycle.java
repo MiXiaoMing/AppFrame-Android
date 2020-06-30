@@ -57,6 +57,7 @@ public class ActivityLifecycle {
 
         @Override
         public void onActivityResumed(Activity activity) {
+            Logger.getLogger().d("打开页面：" + activity.getClass().getName());
             AppRuntimeUtil.getInstance().setCurrentActivity(activity);
 
             for (ActivityLifecycleObserver observer : observers) {
@@ -71,6 +72,7 @@ public class ActivityLifecycle {
             }
 
             previousActivityName = activity.getClass().getName();
+            Logger.getLogger().d("关闭页面：" + previousActivityName);
         }
 
         @Override
